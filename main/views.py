@@ -4,88 +4,39 @@ from main import login_manager
 from flask_admin import Admin, BaseView, expose
 from flask_admin import AdminIndexView
 from flask_admin.contrib.sqla import ModelView
-from flask_admin.form.upload import ImageUploadField
-from flask_admin.form import thumbgen_filename
 from flask_login import LoginManager, UserMixin, login_user, current_user, login_required, logout_user
 from flask import flash, url_for, redirect, render_template, request
 from main.models import User, query_user
-import os.path as op
-from uuid import uuid4
-from jinja2 import Markup
+from main.user import UserAdmin
 
-File_path = op.join (op.dirname(__file__),'static')
-
-class Profile(AdminIndexView):
+class MainProfile(AdminIndexView):
     @expose('/')
+    @login_required
     def default(self):
-        plan = [
-            {
-                'date': '20171212',
-                'train': 'T198',
-                'track': '8'
-            },
-            {
-                'date': '20171212',
-                'train': 'T199',
-                'track': '9'
-            },
-            {
-                'date': '20171212',
-                'train': 'T197',
-                'track': '7'
-            },
-            {
-                'date': '20171212',
-                'train': 'T196',
-                'track': '6'
-            }
+        user_object = User.query.get(current_user.get_id())
+        image_file = url_for('static', filename=user_object.PICTURE)
+
+        orders=[
+            {"order_id":"XD123", "job_name":"王曉明的婚紗照", "equip_count":20},
+            {"order_id":"XD124", "job_name":"王曉明的婚紗照", "equip_count":30},
+            {"order_id":"XD125", "job_name":"王曉明的婚紗照", "equip_count":40}
         ]
-        return self.render('profile.html', plans = plan)
+        return self.render(
+            'profile.html', 
+            account = user_object.ACCOUNT,
+            position = user_object.POSITION,
+            image_file = image_file,
+            name = user_object.NAME,
+            orders = orders
+        )
 
-class MyRecord(BaseView):
-    @expose('/')
-    def index(self):
-        return self.render('index.html')
+# class MyRecord(BaseView):
+#     @expose('/my')
+#     @login_required
+#     def index(self):
+#         return self.render('index.html')
 
-class UserView(ModelView):
-    # Disable model creation
-    can_create = True
-    column_display_pk = True
-    form_display_pk = True
-    column_list = ('ACCOUNT','NAME', 'POSITION', 'PICTURE')
-    form_columns = ( 'NAME','ACCOUNT', 'PASSWORD', 'POSITION', 'PICTURE')
-    column_labels = dict(ACCOUNT="帳號",NAME="姓名",PICTURE='大頭照',PASSWORD="密碼",POSITION="職稱")
-    def getinfo(self):
-        return "this is another model"
-    def __init__(self, session, **kwargs):
-        super(UserView, self).__init__(User, session, **kwargs)
-
-class UserAdmin(UserView):
-    # Setting thumbnails
-    def _list_thumbnail(view, context, model, name):
-        if not model.PICTURE:
-            return ''
-        return Markup('<img src="%s">' % url_for('static',filename=thumbgen_filename(model.PICTURE)))
-    # Image display of formatted list
-    column_formatters = {
-        'PICTURE': _list_thumbnail
-    }
-    # The extended list displays a 60*60 pixel Avatar
-    temp_uuid = str(uuid4())
-    form_extra_fields = {
-        'PICTURE': ImageUploadField('大頭照',
-            base_path=File_path,
-            relative_path=f'uploadFile/{temp_uuid}/', # static中的路径
-            thumbnail_size=(60, 60, True)
-        ) # 大小限制
-    }
-
-admin = Admin(
-    app, 
-    name=u'EQMS',
-    index_view=Profile(name='首頁'), 
-    template_mode='bootstrap3'
-)
+admin = Admin(app, name=u'EQMS',index_view=MainProfile(name='首頁'), template_mode='bootstrap3')
 # admin.add_view(MyRecord(name='我的領用單'))
 admin.add_view(UserAdmin(db.session, name = u'員工帳號'))
 
@@ -110,6 +61,8 @@ def login():
         user = query_user(user_id)
         if user is not None and request.form['password'] == user.PASSWORD:
             curr_user = user
+            curr_user.id = user_id
+            print(curr_user)
             login_user(curr_user)
             return redirect('/admin')
         flash('帳號密碼錯誤!')

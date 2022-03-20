@@ -1,9 +1,4 @@
 from main import db
-import os
-
-def get_upload_path():
-    # do something
-    return os.path.join("./main", "uploads", "images")
 
 class User(db.Model):
     __tablename__ = 'USERS'
@@ -21,7 +16,7 @@ class User(db.Model):
     
     def get_id(self):
         """Return the email address to satisfy Flask-Login's requirements."""
-        return self.ACCOUNT
+        return self.id
 
     def is_authenticated(self):
         """Return True if the user is authenticated."""
