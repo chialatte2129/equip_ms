@@ -1,0 +1,10 @@
+{% extends 'admin/index.html' %}
+{% block body %}
+    Hello World from MyView!<br>
+    {% for plan in plans %}
+        {{ plan.date }}
+        {{ plan.train }}
+        {{ plan.track }}
+        <br>
+    {% endfor %}
+{% endblock %}
