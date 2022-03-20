@@ -1,0 +1,110 @@
+{% extends 'admin/index.html' %}
+{% block body %}
+<div>
+    <div class="card">
+        <div class="card__image">
+            <img src={{image_file}} alt="">
+        </div>
+        <div class="card__contacts">
+            <h1>員工資訊</h1>
+            <div class="card__info">
+                <table>
+                    <tr>
+                        <td class="l-grey">姓名</td>
+                        <td class="pl-md">{{name}}</td>
+                    </tr>
+                    <tr>
+                        <td class="l-grey">職位</td>
+                        <td class="pl-md">{{position}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card-right">
+        <div class="card__contacts">
+            <h1>我的領用單</h1>
+            {% for row in orders %}
+            <div>
+                <span>領用單編號: {{ row.order_id }}, 工作: {{ row.job_name }}, 領用器材數: {{ row.equip_count }} </span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    padding: 50px 0;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+.card {
+    float:left;
+    width: 30%;
+    border: 1px solid #333;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card-right {
+    min-height:536px;
+    float:left;
+    width: 70%;
+    border: 1px solid #333;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card__image img {
+    width: 100%;
+    display: block;
+}
+
+.card__contacts {
+    padding: 20px
+}
+
+.card__contacts h1 {
+    margin-bottom: 30px;
+}
+
+table td {
+    padding: 5px;
+}
+
+.card__icons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.icon {
+    padding: 15px;
+}
+/* Utilities */
+
+.l-grey {
+    color: #ccc;
+}
+
+.d-grey {
+    color: #999;
+}
+.pl-md {
+    padding-left: 30px
+}
+</style>
+{% endblock %}
