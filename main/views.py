@@ -31,6 +31,13 @@ class MainProfile(AdminIndexView):
             orders = orders
         )
 
+###給蕙瑄弄 隨意一個領用單ID show出裡面所有器材 跟歸還器材按鈕
+###可以先去oracle建假資料
+class OrderEquipView(BaseView):
+    @expose('/')
+    def order_equip(self):
+        return self.render('order_equip.html', lendingorder={})
+
 class JobView(ModelView):
     can_create = True
     column_list = ('NAME', 'MANAGER_ACCOUNT',  'OWNER_NAME', 'OWNER_PHONE', 'LOCATION',"DESCRIPTION")
@@ -66,9 +73,8 @@ class CateView(ModelView):
     def __init__(self, session, **kwargs):
         super(CateView, self).__init__(Category, session, **kwargs)
 
-
-
 admin = Admin(app, name=u'EQMS',index_view=MainProfile(name='首頁'), template_mode='bootstrap3')
+admin.add_view(OrderEquipView(name='領用單細項(蕙萱)'))
 admin.add_view(UserAdmin(db.session, name = u'使用者管理'))
 admin.add_view(JobView(db.session, name=u"工作管理"))
 admin.add_view(CateView(db.session, name = u'類別管理'))
