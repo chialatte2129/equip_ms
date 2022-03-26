@@ -22,6 +22,7 @@ login_manager.login_message_category = 'info'
 login_manager.login_message = '請登入'
 login_manager.init_app(app)
 
+# app.config['SQLALCHEMY_DATABASE_URI'] = "oracle://GROUP5:group5group5@140.117.69.58:1521/orcl"
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
 db = SQLAlchemy(app)
 #  很重要，一定要放這邊

@@ -1,5 +1,6 @@
 from flask_admin.form.upload import ImageUploadField
 from flask_admin.form import thumbgen_filename
+from flask_admin.form.fields import Select2Field
 from flask_admin.contrib.sqla import ModelView
 from flask_login import login_required
 from flask import url_for
@@ -15,9 +16,22 @@ class UserView(ModelView):
     can_create = True
     column_display_pk = True
     form_display_pk = True
-    column_list = ('ACCOUNT','NAME', 'POSITION', 'PICTURE')
-    form_columns = ( 'NAME','ACCOUNT', 'PASSWORD', 'POSITION', 'PICTURE')
-    column_labels = dict(ACCOUNT="帳號",NAME="姓名",PICTURE='大頭照',PASSWORD="密碼",POSITION="職稱")
+    column_list = ('ACCOUNT','NAME', 'POSITION', 'AUTH', 'PICTURE')
+    form_columns = ( 'NAME','ACCOUNT', 'PASSWORD', 'POSITION', 'AUTH', 'PICTURE')
+    column_labels = dict(ACCOUNT="帳號",NAME="姓名",AUTH='權限',PICTURE='大頭照',PASSWORD="密碼",POSITION="職稱")
+    
+    form_overrides = dict(
+        AUTH=Select2Field
+    )
+    form_args = dict(
+        AUTH=dict(
+            choices=[
+                ('system', '管理員'),
+                ('user', '使用者')
+            ]
+        )
+    )
+
     def getinfo(self):
         return "this is another model"
 
@@ -25,12 +39,11 @@ class UserView(ModelView):
         super(UserView, self).__init__(User, session, **kwargs)
 
 class UserAdmin(UserView):
-    # Setting thumbnails
     def _list_thumbnail(view, context, model, name):
         if not model.PICTURE:
             return ''
         return Markup('<img src="%s">' % url_for('static',filename=thumbgen_filename(model.PICTURE)))
-    # Image display of formatted list
+
     column_formatters = {
         'PICTURE': _list_thumbnail
     }
