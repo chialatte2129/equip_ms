@@ -16,7 +16,7 @@ class User(db.Model):
     def is_active(self):
         """True, as all users are active."""
         return True
-    
+
     def get_id(self):
         """Return the email address to satisfy Flask-Login's requirements."""
         return self.id
@@ -29,14 +29,14 @@ class User(db.Model):
     def is_anonymous(self):
         """False, as anonymous users aren't supported."""
         return False
-        
+
     def __repr__(self):
         return f'{self.NAME} <{self.ACCOUNT}>'
 
 def query_user(user_id):
     for user in User.query.all():
         if user_id == user.ACCOUNT:
-            return user 
+            return user
 
 class Job(db.Model):
     __tablename__ = 'JOB'
@@ -50,9 +50,19 @@ class Job(db.Model):
     OWNER_PHONE = db.Column(db.String(45))
     OWNER_NAME = db.Column(db.String(45), unique=False, nullable=True)
     DESCRIPTION = db.Column(db.String(128), unique=False, nullable=True)
-        
+
     def __repr__(self):
         return '<Job %r>' % self.DESCRIPTION
+
+# class EquipCate(db.Model):
+#     __tablename__ = 'EQUIPCATE'
+#     CID = db.Column(db.Integer(), db.ForeignKey('CATEGORY.CID'), primary_key=True)
+#     EID = db.Column(db.Integer(), db.ForeignKey('Equip.EID'), primary_key=True)
+
+equip_cates = db.Table('EQUIPCATE', 
+    db.Column("EID",db.Integer, db.ForeignKey('EQUIP.EID')),
+    db.Column("CID",db.Integer, db.ForeignKey('CATEGORY.CID'))
+)
 
 class Category(db.Model):
     __tablename__ = 'CATEGORY'
@@ -60,7 +70,7 @@ class Category(db.Model):
     can_create = True
     CID = db.Column(db.Integer(), primary_key=True , autoincrement=True)
     CNAME = db.Column(db.String(45), nullable=False)
-        
+
     def __repr__(self):
         return f'{self.CNAME}'
 
@@ -73,6 +83,7 @@ class Equip(db.Model):
     BUY_DATE = db.Column(db.Date, nullable=False, default=dt.utcnow)
     STATUS = db.Column(db.Integer(), default=0)
     PICTURE = db.Column(db.String(200))
-        
+    CATES = db.relationship('Category', secondary=equip_cates, backref=db.backref("EQUIP"), lazy="dynamic")
+
     def __repr__(self):
-        return '<Job %r>' % self.DESCRIPTION
+        return '<Equip %r>' % self.DESCRIPTION
