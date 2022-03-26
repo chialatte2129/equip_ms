@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--網頁的編碼-->
+        <meta charset="UTF-8"></meta>
+        <title>器材明細</title>
+    </head>
+
+    <body>
+    <div  style="text-align:center;">
+    <h1>器材明細</h1>
+    <!--待連結-->
+    <a href="orderequip.html" title="查看領用單"><img src="image/table_icon.png" width="25"></a>&nbsp&nbsp
+    <a href="lendingorder.html" title="領用清單"><img src="image/search_icon.png" width="30"></a>&nbsp
+    <a href="{{ url_for('logout') }}"  title="登出"><img src="image/logout_icon.png" width="30"></a>
+    </div>
+    <div style="text-align:center;">
+    <p class="welcome">歡迎 , 使用者：{{user}}</p>
+    </div>
+
+    <!--待修正 
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+  
+    <script language="javascript">
+
+    alert('您沒有管理員的權限喔！');
+
+    </script>
+    {% endif %}
+    {% endwith %}
+    -->
+    <div style="text-align:center;">
+    <select>
+        <option>物品類別</option>
+        <option>{{ equip.物品類別 }}</option>
+        <option>{{ equip.物品類別 }}</option>
+        <option>{{ equip.物品類別 }}</option>
+        <option>{{ equip.物品類別 }}</option>
+        <option>{{ equip.物品類別 }}</option>
+    </select>
+    <br/>
+    <form id="form"> 
+      <input type="search" id="query" name="q" placeholder="輸入物品名稱">
+      <button>Search</button>
+    </form>
+    </div>
+
+    <br/>
+    <div style="text-align:center;">
+    <form method="post" action={{ url_for('cart') }}>
+    <table  align="center"
+    cellpadding="10" border='3'>
+      <tr>
+        <th>物品編號</th>
+        <th>物品類別</th>
+        <th>物品名稱</th>
+        <th>採購日期</th>
+        <th>領用狀態</th>
+        <th>圖片檔</th>
+        <th></th>
+        <th></th>
+      </tr>
+      <tr>
+        <td> {{ equip.物品編號 }}</td>
+        <td> {{ equip.物品類別 }}</td>
+        <td> {{ equip.物品名稱 }}</td>
+        <td> {{ equip.採購日期 }}</td>
+        <td> {{ equip.領用狀態 }}</td>
+        <td> {{ equip.圖片檔 }}</td>
+        <!--待連結-->
+        <td><a href="{{ url_for() }}"><button type="button">更多資訊</button></a></td>
+        <td><button type="submit" value="{{orderequip}}" name="pid" >加到領用單</button></td>
+        
+        <!-- 傳遞商品編號 -->
+      </tr>
+    </table>
+  </form>
+</div>
