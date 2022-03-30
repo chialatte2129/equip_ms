@@ -22,6 +22,17 @@ class EquipView(ModelView):
         PICTURE="器材照片",
         CATES="器材類別"
     )
+    form_overrides = dict(
+        STATUS=Select2Field
+    )
+    form_args = dict(
+        STATUS=dict(
+            choices=[
+                (0, '可領用'),
+                (1, '使用中')
+            ]
+        )
+    )
 
     def __init__(self, session, **kwargs):
         super(EquipView, self).__init__(Equip, session, **kwargs)

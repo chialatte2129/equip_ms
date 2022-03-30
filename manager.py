@@ -3,3 +3,4 @@ import os
 
 app.debug = os.getenv("DEBUG", True)
 app.run()
+
