@@ -31,8 +31,9 @@
                         <tr>
                             <th>領用單編號</th>
                             <th>工作</th>
+                            <th>領用事由</th>
                             <th>領用日期</th>
-                            <th>預計歸還日期</th>
+                            <th>歸還日期</th>
                             <th>器材數目</th>
                             
                             <th>開啟領用單</th>
@@ -40,11 +41,12 @@
                         </tr>
                         {% for row in orders %}
                         <tr>
-                            <td> {{ row.order_id }}</td>
-                            <td> {{ row.job_name }}</td>
-                            <td> 領用日期</td>
-                            <td> 歸還日期</td>
-                            <td> {{ row.equip_count }}</td>
+                            <td> {{ row.領用單編號 }}</td>
+                            <td> {{ row.所屬工作 }}</td>
+                            <td> {{ row.領用事由 }}</td>
+                            <td> {{ row.領用日期 }}</td>
+                            <td> {{ row.歸還日期 }}</td>
+                            <td> {{ row.領用數量 }}</td>
                             
                             <!--更多資訊連到該筆領用單的明細-->
                             <td><a href="order/{{row.order_id}}"><button type="button">開啟領用單</button></a></td>

@@ -52,12 +52,7 @@ class Job(db.Model):
     DESCRIPTION = db.Column(db.String(128), unique=False, nullable=True)
 
     def __repr__(self):
-        return '<Job %r>' % self.DESCRIPTION
-
-# class EquipCate(db.Model):
-#     __tablename__ = 'EQUIPCATE'
-#     CID = db.Column(db.Integer(), db.ForeignKey('CATEGORY.CID'), primary_key=True)
-#     EID = db.Column(db.Integer(), db.ForeignKey('Equip.EID'), primary_key=True)
+        return f'{self.NAME}'
 
 equip_cates = db.Table('EQUIPCATE', 
     db.Column("EID",db.Integer, db.ForeignKey('EQUIP.EID')),
@@ -86,4 +81,26 @@ class Equip(db.Model):
     CATES = db.relationship('Category', secondary=equip_cates, backref=db.backref("EQUIP"), lazy="dynamic")
 
     def __repr__(self):
-        return '<Equip %r>' % self.DESCRIPTION
+        return f'{self.PNAME}'
+
+lending_equip = db.Table('ORDEREQUIP', 
+    db.Column("EID",db.Integer, db.ForeignKey('EQUIP.EID')),
+    db.Column("OID",db.Integer, db.ForeignKey('LENDINGORDER.OID'))
+)
+
+class LendingOrder(db.Model):
+    __tablename__ = 'LENDINGORDER'
+    __table_args__ = {'extend_existing': True}
+    # can_create = True
+    OID = db.Column(db.Integer(), primary_key=True , autoincrement=True)
+    RECEIVE_DATE = db.Column(db.Date, nullable=True)
+    RETURN_DATE = db.Column(db.Date, nullable=True)
+    REASON = db.Column(db.String(500))
+    JID = db.Column(db.Integer(), db.ForeignKey('JOB.JID'), nullable=False)
+    ORDER_JOB = db.relationship(Job, foreign_keys=[JID])
+    ACCOUNT = db.Column(db.String(30), db.ForeignKey('USERS.ACCOUNT'), nullable=False)
+    LENDING_ACCOUNT = db.relationship(User, foreign_keys=[ACCOUNT])
+    EQUIP = db.relationship('Equip', secondary=lending_equip, backref=db.backref("LENDINGORDER"))
+
+    def __repr__(self):
+        return '<Lending Order %r>' % self.REASON

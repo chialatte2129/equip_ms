@@ -1,14 +1,49 @@
+from typing import List
 from main import app
-from main import db
+from main import db, cursor
 from main import login_manager
 from flask_admin import Admin, BaseView, expose
 from flask_admin import AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from flask_login import LoginManager, UserMixin, login_user, current_user, login_required, logout_user
 from flask import flash, url_for, redirect, render_template, request
-from main.models import User, query_user, Job, Category, Equip
+from main.models import User, query_user, Job, Category, Equip, LendingOrder
 from main.user import UserAdmin
 from main.equip import EquipAdmin
+
+def my_lending_order(account)->list:
+    sql="""
+        SELECT 
+            LO.OID, 
+            TO_CHAR(RECEIVE_DATE, 'YYYY-MM-DD'), 
+            COALESCE(TO_CHAR(RETURN_DATE, 'YYYY-MM-DD'),'--'),
+            REASON, 
+            JB.NAME, 
+            COUNT(OE.EID)
+        FROM LENDINGORDER LO
+        LEFT OUTER JOIN JOB JB ON LO.JID = JB.JID
+        LEFT OUTER JOIN ORDEREQUIP OE ON LO.OID = OE.OID
+        WHERE LO.JID = JB.JID AND LO.ACCOUNT = :account
+        GROUP BY LO.OID, RECEIVE_DATE, RETURN_DATE, REASON, JB.NAME
+        ORDER BY RECEIVE_DATE desc
+    """
+    cursor.prepare(sql)
+    cursor.execute(None, {'account':account})
+    data = cursor.fetchall()
+    res_data = []
+    print(data)
+    for i in data:
+        print(i)
+        item = {
+            '領用單編號': i[0],
+            '領用日期': i[1],
+            '歸還日期': i[2],
+            '領用原因': i[3],
+            '所屬工作': i[4],
+            '領用數量':i[5]
+        }
+        res_data.append(item)
+    return res_data
 
 class MainProfile(AdminIndexView):
     @expose('/')
@@ -17,11 +52,7 @@ class MainProfile(AdminIndexView):
         user_object = User.query.get(current_user.get_id())
         image_file = url_for('static', filename=user_object.PICTURE)
 
-        orders=[
-            {"order_id":"XD123", "job_name":"王曉明的婚紗照", "equip_count":20},
-            {"order_id":"XD124", "job_name":"王曉明的婚紗照", "equip_count":30},
-            {"order_id":"XD125", "job_name":"王曉明的婚紗照", "equip_count":40}
-        ]
+        orders=my_lending_order(user_object.ACCOUNT)
         return self.render(
             'profile.html', 
             account = user_object.ACCOUNT,
@@ -73,12 +104,31 @@ class CateView(ModelView):
     def __init__(self, session, **kwargs):
         super(CateView, self).__init__(Category, session, **kwargs)
 
+class LendingOrderView(ModelView):
+    # can_create = False
+    # can_edit=False
+    column_list = ('OID', 'REASON', 'LENDING_ACCOUNT', 'ORDER_JOB', 'RECEIVE_DATE', 'RETURN_DATE','EQUIP')
+    form_columns = ('REASON','LENDING_ACCOUNT','ORDER_JOB',  'RECEIVE_DATE', 'RETURN_DATE','EQUIP')
+    column_labels = dict(
+        OID="領用單編號",
+        REASON="領用事由",
+        RECEIVE_DATE='領用日期',
+        RETURN_DATE="歸還日期",
+        ORDER_JOB="所屬工作",
+        LENDING_ACCOUNT="領用人員",
+        EQUIP="領用器材"
+    )
+
+    def __init__(self, session, **kwargs):
+        super(LendingOrderView, self).__init__(LendingOrder, session, **kwargs)
+
 admin = Admin(app, name=u'EQMS',index_view=MainProfile(name='首頁'), template_mode='bootstrap3')
 admin.add_view(OrderEquipView(name='領用單細項(蕙萱)'))
 admin.add_view(UserAdmin(db.session, name = u'使用者管理'))
 admin.add_view(JobView(db.session, name=u"工作管理"))
 admin.add_view(CateView(db.session, name = u'類別管理'))
 admin.add_view(EquipAdmin(db.session, name = u'器材管理'))
+admin.add_view(LendingOrderView(db.session, name = u'領用單紀錄'))
 
 @login_manager.user_loader
 def load_user(user_id):
