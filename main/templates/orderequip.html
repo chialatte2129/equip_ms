@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--網頁的編碼-->
+        <meta charset="UTF-8"></meta>
+        <title>領用單明細</title>
+    </head>
+
+    <body>
+    <div  style="text-align:center;">
+    <h1>領用單明細</h1>
+    <h2>領用單編號:{{ lendingorder.領用單編號}}</h1>
+    </div>
+    <div style="text-align:center;">
+    <form method="post" action={{ url_for('cart') }}>
+    <table  align="center"
+    cellpadding="10" border='3'>
+      <tr>
+        <th>物品編號</th>
+        <th>物品類別</th>
+        <th>物品名稱</th>
+        <th>採購日期</th>
+        <th>領用狀態</th>
+        <th>圖片檔</th>
+      </tr>
+      <tr>
+        <td> {{ lendingorder.物品編號 }}</td>
+        <td> {{ lendingorder.物品類別 }}</td>
+        <td> {{ lendingorder.物品名稱 }}</td>
+        <td> {{ lendingorder.採購日期 }}</td>
+        <td> {{ lendingorder.領用狀態 }}</td>
+        <td> {{ lendingorder.圖片檔 }}</td>
+      </tr>
+    </table>
+  </form>
+</div>

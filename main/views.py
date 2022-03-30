@@ -123,7 +123,7 @@ class LendingOrderView(ModelView):
         super(LendingOrderView, self).__init__(LendingOrder, session, **kwargs)
 
 admin = Admin(app, name=u'EQMS',index_view=MainProfile(name='首頁'), template_mode='bootstrap3')
-admin.add_view(OrderEquipView(name='領用單細項(蕙萱)'))
+admin.add_view(OrderEquipView(name='領用單細項(瑄瑄)'))
 admin.add_view(UserAdmin(db.session, name = u'使用者管理'))
 admin.add_view(JobView(db.session, name=u"工作管理"))
 admin.add_view(CateView(db.session, name = u'類別管理'))

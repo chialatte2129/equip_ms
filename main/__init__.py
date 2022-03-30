@@ -4,6 +4,8 @@ from flask_login import LoginManager
 import cx_Oracle
 import sys
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 try:
     lib_dir=r"C:\oracle\instantclient_21_3"
