@@ -24,11 +24,38 @@
     <div class="card-right">
         <div class="card__contacts">
             <h1>我的領用單</h1>
-            {% for row in orders %}
-            <div>
-                <span>領用單編號: {{ row.order_id }}, 工作: {{ row.job_name }}, 領用器材數: {{ row.equip_count }} </span>
+            <div style="text-align:center;">
+                <form method="post">
+                    <table  align="center"
+                    cellpadding="10" border='3'>
+                        <tr>
+                            <th>領用單編號</th>
+                            <th>工作</th>
+                            <th>領用事由</th>
+                            <th>領用日期</th>
+                            <th>歸還日期</th>
+                            <th>器材數目</th>
+                            
+                            <th>開啟領用單</th>
+                            
+                        </tr>
+                        {% for row in orders %}
+                        <tr>
+                            <td> {{ row.領用單編號 }}</td>
+                            <td> {{ row.所屬工作 }}</td>
+                            <td> {{ row.領用事由 }}</td>
+                            <td> {{ row.領用日期 }}</td>
+                            <td> {{ row.歸還日期 }}</td>
+                            <td> {{ row.領用數量 }}</td>
+                            
+                            <!--更多資訊連到該筆領用單的明細-->
+                            <td><a href="order/{{row.order_id}}"><button type="button">開啟領用單</button></a></td>
+                        <!-- 傳遞商品編號 -->
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </form>
             </div>
-            {% endfor %}
         </div>
     </div>
 </div>
@@ -42,7 +69,6 @@
 
 
 body {
-    padding: 50px 0;
     font-size: 16px;
     display: flex;
     justify-content: center;

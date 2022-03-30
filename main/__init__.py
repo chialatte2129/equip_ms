@@ -4,6 +4,8 @@ from flask_login import LoginManager
 import cx_Oracle
 import sys
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 try:
     lib_dir=r"C:\oracle\instantclient_21_3"
@@ -22,7 +24,10 @@ login_manager.login_message_category = 'info'
 login_manager.login_message = '請登入'
 login_manager.init_app(app)
 
+# app.config['SQLALCHEMY_DATABASE_URI'] = "oracle://GROUP5:group5group5@140.117.69.58:1521/orcl"
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
 db = SQLAlchemy(app)
+connection = cx_Oracle.connect(os.getenv("DB_USERNAME"), os.getenv("DB_PASSWORD"), cx_Oracle.makedsn(os.getenv("DB_HOST"), 1521, os.getenv("DB_NAME"))) # 連線資訊
+cursor = connection.cursor()
 #  很重要，一定要放這邊
 from main import views
