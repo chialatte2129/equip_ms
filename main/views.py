@@ -45,32 +45,27 @@ def my_lending_order(account)->list:
         res_data.append(item)
     return res_data
 
-def lending_order_detail(account)->list:
-    sql="""
+def lending_order_detail(lending_id)->list:
+    sql=f"""
+        SELECT 
+            E.EID EID, 
+            E.PNAME E_NAME,
+            LISTAGG(C.CNAME, ', ') WITHIN GROUP(ORDER BY C.CNAME) CATES,
+            E.BUY_DATE BUY_DATE,
+            e.status,
+            E.PICTURE PICTURE
 
- 
-    SELECT 
-        E.EID EID, 
-        E.PNAME E_NAME,
-        LISTAGG(C.CNAME, ', ') WITHIN GROUP(ORDER BY C.CNAME) CATES,
-        E.BUY_DATE BUY_DATE,
-        e.status,
-        E.PICTURE PICTURE
-
-    FROM EQUIP E, EQUIPCATE EC, CATEGORY C, LENDINGORDER LO
-    WHERE E.EID=EC.EID AND EC.CID=C.CID AND LO.ACCOUNT = :account AND E.EID in (
-        SELECT EID FROM ORDEREQUIP WHERE OID = 1
-    )
-    GROUP BY E.EID, E.PNAME, E.BUY_DATE, E.PICTURE, E.STATUS
-
+        FROM EQUIP E, EQUIPCATE EC, CATEGORY C, LENDINGORDER LO
+        WHERE E.EID=EC.EID AND EC.CID=C.CID AND E.EID in (
+            SELECT EID FROM ORDEREQUIP WHERE OID = :id
+        )
+        GROUP BY E.EID, E.PNAME, E.BUY_DATE, E.PICTURE, E.STATUS
     """
     cursor.prepare(sql)
-    cursor.execute(None, {'account':account})
+    cursor.execute(None, {'id':lending_id})
     data = cursor.fetchall()
     res_data = []
-    print(data)
     for i in data:
-        print(i)
         item = {
             '物品編號': i[0],
             '物品類別': i[1],
@@ -108,24 +103,15 @@ class OrderEquipView(BaseView):
         return False
  
     @expose('/')
-<<<<<<< HEAD
     def index(self,id):
-        print(id)
-        return self.render('order_equip.html', lendingorder={})
-=======
-    def order_equip(self):
-        user_object = User.query.get(current_user.get_id())
-        lendingorder=lending_order_detail(user_object.ACCOUNT)
-        
+        # user_object = User.query.get(current_user.get_id())
+        lendingorder=lending_order_detail(id)
+
         return self.render(
             'order_equip.html', 
-            account = user_object.ACCOUNT,
-            oId = 1,
+            oId = id,
             lendingorder = lendingorder
         )
-
-        #return self.render('order_equip.html', lendingorder={})
->>>>>>> tony
 
 class NewLendingOrderView(BaseView):
     def is_visible(self):
