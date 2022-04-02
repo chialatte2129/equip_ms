@@ -10,12 +10,8 @@
 
     <body>
     <div  style="text-align:center;">
-      <h1>領用單明細</h1>
-      <h2>領用單編號:{{oId}}</h1>
-      <h2>工作事項:{{oId}}</h1>
-      <h2>領用事由:{{oId}}</h1>
-      <h2>領用日期:{{oId}}</h1>
-      <h2>歸還日期:{{oId}}</h1>
+    <h1>領用單明細</h1>
+    <h2>領用單編號:{{ lendingorder.領用單編號}}</h1>
     </div>
     <div style="text-align:center;">
     <form method="post">
@@ -23,23 +19,20 @@
     cellpadding="10" border='3'>
       <tr>
         <th>物品編號</th>
-        <th>物品名稱</th>
         <th>物品類別</th>
+        <th>物品名稱</th>
         <th>採購日期</th>
         <th>領用狀態</th>
         <th>圖片檔</th>
       </tr>
-      {% for row in lendingorder %}
       <tr>
-        <td> {{ row.物品編號 }}</td>
-        <td> {{ row.物品名稱 }}</td>
-        <td> {{ row.物品類別 }}</td>
-        <td> {{ row.採購日期 }}</td>
-        <td> {{ row.領用狀態 }}</td>
-        <td><img src="{{ url_for('static',filename = row.圖片檔) }}" alt="" width="100" height="100"></td>
-       
+        <td> {{ lendingorder.物品編號 }}</td>
+        <td> {{ lendingorder.物品類別 }}</td>
+        <td> {{ lendingorder.物品名稱 }}</td>
+        <td> {{ lendingorder.採購日期 }}</td>
+        <td> {{ lendingorder.領用狀態 }}</td>
+        <td> {{ lendingorder.圖片檔 }}</td>
       </tr>
-      {% endfor %}
     </table>
   </form>
 </div>

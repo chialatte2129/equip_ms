@@ -45,32 +45,27 @@ def my_lending_order(account)->list:
         res_data.append(item)
     return res_data
 
-def lending_order_detail(account)->list:
-    sql="""
+def lending_order_detail(lending_id)->list:
+    sql=f"""
+        SELECT 
+            E.EID EID, 
+            E.PNAME E_NAME,
+            LISTAGG(C.CNAME, ', ') WITHIN GROUP(ORDER BY C.CNAME) CATES,
+            E.BUY_DATE BUY_DATE,
+            e.status,
+            E.PICTURE PICTURE
 
- 
-    SELECT 
-        E.EID EID, 
-        E.PNAME E_NAME,
-        LISTAGG(C.CNAME, ', ') WITHIN GROUP(ORDER BY C.CNAME) CATES,
-        E.BUY_DATE BUY_DATE,
-        e.status,
-        E.PICTURE PICTURE
-
-    FROM EQUIP E, EQUIPCATE EC, CATEGORY C, LENDINGORDER LO
-    WHERE E.EID=EC.EID AND EC.CID=C.CID AND LO.ACCOUNT = :account AND E.EID in (
-        SELECT EID FROM ORDEREQUIP WHERE OID = 1
-    )
-    GROUP BY E.EID, E.PNAME, E.BUY_DATE, E.PICTURE, E.STATUS
-
+        FROM EQUIP E, EQUIPCATE EC, CATEGORY C, LENDINGORDER LO
+        WHERE E.EID=EC.EID AND EC.CID=C.CID AND E.EID in (
+            SELECT EID FROM ORDEREQUIP WHERE OID = :id
+        )
+        GROUP BY E.EID, E.PNAME, E.BUY_DATE, E.PICTURE, E.STATUS
     """
     cursor.prepare(sql)
-    cursor.execute(None, {'account':account})
+    cursor.execute(None, {'id':lending_id})
     data = cursor.fetchall()
     res_data = []
-    print(data)
     for i in data:
-        print(i)
         item = {
             '物品編號': i[0],
             '物品類別': i[1],
@@ -103,19 +98,35 @@ class MainProfile(AdminIndexView):
 ###可以先去oracle建假資料
 ###元元try看看
 class OrderEquipView(BaseView):
+    def is_visible(self):
+        # This view won't appear in the menu structure
+        return False
+ 
     @expose('/')
-    def order_equip(self):
-        user_object = User.query.get(current_user.get_id())
-        lendingorder=lending_order_detail(user_object.ACCOUNT)
-        
+    def index(self,id):
+        # user_object = User.query.get(current_user.get_id())
+        lendingorder=lending_order_detail(id)
+
         return self.render(
             'order_equip.html', 
-            account = user_object.ACCOUNT,
-            oId = 1,
+            oId = id,
             lendingorder = lendingorder
         )
 
-        #return self.render('order_equip.html', lendingorder={})
+class NewLendingOrderView(BaseView):
+    def is_visible(self):
+        # This view won't appear in the menu structure
+        return False
+ 
+    @expose('/')
+    def index(self):
+        print(id)
+        return self.render('new_lending_order.html', lendingorder={})
+
+class LogoutView(BaseView):
+    @expose('/')
+    def logout(self):
+        return redirect('/logout')
 
 class JobView(ModelView):
     can_create = True
@@ -171,12 +182,14 @@ class LendingOrderView(ModelView):
         super(LendingOrderView, self).__init__(LendingOrder, session, **kwargs)
 
 admin = Admin(app, name=u'EQMS',index_view=MainProfile(name='首頁'), template_mode='bootstrap3')
-admin.add_view(OrderEquipView(name='領用單細項(瑄瑄)'))
-admin.add_view(UserAdmin(db.session, name = u'使用者管理'))
-admin.add_view(JobView(db.session, name=u"工作管理"))
-admin.add_view(CateView(db.session, name = u'類別管理'))
-admin.add_view(EquipAdmin(db.session, name = u'器材管理'))
-admin.add_view(LendingOrderView(db.session, name = u'領用單紀錄'))
+admin.add_view(OrderEquipView(url="order/<id>"))
+admin.add_view(NewLendingOrderView(url="new_order"))
+admin.add_view(UserAdmin(db.session, url="user", name = u'使用者管理'))
+admin.add_view(JobView(db.session, url="job", name=u"工作管理"))
+admin.add_view(CateView(db.session, url="cate", name = u'類別管理'))
+admin.add_view(EquipAdmin(db.session, url="equip", name = u'器材管理'))
+admin.add_view(LendingOrderView(db.session, url="lending_record", name = u'領用單紀錄'))
+admin.add_view(LogoutView(name=u'登出'))
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -187,9 +200,11 @@ def load_user(user_id):
         return curr_user
 
 @app.route('/')
-@login_required
 def index():
-    return 'Logged in as: %s' % current_user.get_id()
+    if current_user.get_id():
+        return redirect("/admin")
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -210,4 +225,5 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return 'Logged out successfully!'
+    return redirect(url_for('login'))
+    # return 'Logged out successfully!'
