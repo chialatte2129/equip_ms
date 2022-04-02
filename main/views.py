@@ -65,9 +65,29 @@ class MainProfile(AdminIndexView):
 ###給蕙瑄弄 隨意一個領用單ID show出裡面所有器材 跟歸還器材按鈕
 ###可以先去oracle建假資料
 class OrderEquipView(BaseView):
+    def is_visible(self):
+        # This view won't appear in the menu structure
+        return False
+ 
     @expose('/')
-    def order_equip(self):
+    def index(self,id):
+        print(id)
         return self.render('order_equip.html', lendingorder={})
+
+class NewLendingOrderView(BaseView):
+    def is_visible(self):
+        # This view won't appear in the menu structure
+        return False
+ 
+    @expose('/')
+    def index(self):
+        print(id)
+        return self.render('new_lending_order.html', lendingorder={})
+
+class LogoutView(BaseView):
+    @expose('/')
+    def logout(self):
+        return redirect('/logout')
 
 class JobView(ModelView):
     can_create = True
@@ -123,12 +143,14 @@ class LendingOrderView(ModelView):
         super(LendingOrderView, self).__init__(LendingOrder, session, **kwargs)
 
 admin = Admin(app, name=u'EQMS',index_view=MainProfile(name='首頁'), template_mode='bootstrap3')
-admin.add_view(OrderEquipView(name='領用單細項(瑄瑄)'))
-admin.add_view(UserAdmin(db.session, name = u'使用者管理'))
-admin.add_view(JobView(db.session, name=u"工作管理"))
-admin.add_view(CateView(db.session, name = u'類別管理'))
-admin.add_view(EquipAdmin(db.session, name = u'器材管理'))
-admin.add_view(LendingOrderView(db.session, name = u'領用單紀錄'))
+admin.add_view(OrderEquipView(url="order/<id>"))
+admin.add_view(NewLendingOrderView(url="new_order"))
+admin.add_view(UserAdmin(db.session, url="user", name = u'使用者管理'))
+admin.add_view(JobView(db.session, url="job", name=u"工作管理"))
+admin.add_view(CateView(db.session, url="cate", name = u'類別管理'))
+admin.add_view(EquipAdmin(db.session, url="equip", name = u'器材管理'))
+admin.add_view(LendingOrderView(db.session, url="lending_record", name = u'領用單紀錄'))
+admin.add_view(LogoutView(name=u'登出'))
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -139,9 +161,11 @@ def load_user(user_id):
         return curr_user
 
 @app.route('/')
-@login_required
 def index():
-    return 'Logged in as: %s' % current_user.get_id()
+    if current_user.get_id():
+        return redirect("/admin")
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -162,4 +186,5 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return 'Logged out successfully!'
+    return redirect(url_for('login'))
+    # return 'Logged out successfully!'
