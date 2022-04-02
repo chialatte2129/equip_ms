@@ -45,6 +45,43 @@ def my_lending_order(account)->list:
         res_data.append(item)
     return res_data
 
+def lending_order_detail(account)->list:
+    sql="""
+
+ 
+    SELECT 
+        E.EID EID, 
+        E.PNAME E_NAME,
+        LISTAGG(C.CNAME, ', ') WITHIN GROUP(ORDER BY C.CNAME) CATES,
+        E.BUY_DATE BUY_DATE,
+        e.status,
+        E.PICTURE PICTURE
+
+    FROM EQUIP E, EQUIPCATE EC, CATEGORY C, LENDINGORDER LO
+    WHERE E.EID=EC.EID AND EC.CID=C.CID AND LO.ACCOUNT = :account AND E.EID in (
+        SELECT EID FROM ORDEREQUIP WHERE OID = 1
+    )
+    GROUP BY E.EID, E.PNAME, E.BUY_DATE, E.PICTURE, E.STATUS
+
+    """
+    cursor.prepare(sql)
+    cursor.execute(None, {'account':account})
+    data = cursor.fetchall()
+    res_data = []
+    print(data)
+    for i in data:
+        print(i)
+        item = {
+            '物品編號': i[0],
+            '物品類別': i[1],
+            '物品名稱': i[2],
+            '採購日期': i[3],
+            '領用狀態': i[4],
+            '圖片檔': i[5]
+        }
+        res_data.append(item)
+    return res_data
+
 class MainProfile(AdminIndexView):
     @expose('/')
     @login_required
@@ -64,15 +101,31 @@ class MainProfile(AdminIndexView):
 
 ###給蕙瑄弄 隨意一個領用單ID show出裡面所有器材 跟歸還器材按鈕
 ###可以先去oracle建假資料
+###元元try看看
 class OrderEquipView(BaseView):
     def is_visible(self):
         # This view won't appear in the menu structure
         return False
  
     @expose('/')
+<<<<<<< HEAD
     def index(self,id):
         print(id)
         return self.render('order_equip.html', lendingorder={})
+=======
+    def order_equip(self):
+        user_object = User.query.get(current_user.get_id())
+        lendingorder=lending_order_detail(user_object.ACCOUNT)
+        
+        return self.render(
+            'order_equip.html', 
+            account = user_object.ACCOUNT,
+            oId = 1,
+            lendingorder = lendingorder
+        )
+
+        #return self.render('order_equip.html', lendingorder={})
+>>>>>>> tony
 
 class NewLendingOrderView(BaseView):
     def is_visible(self):
