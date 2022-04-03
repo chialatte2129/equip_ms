@@ -10,6 +10,7 @@ from flask import flash, url_for, redirect, render_template, request
 from main.models import User, query_user, Job, Category, Equip, LendingOrder
 from main.user import UserAdmin
 from main.equip import EquipAdmin
+from datetime import datetime
 
 def my_lending_order(account)->list:
     sql="""
@@ -106,7 +107,6 @@ class OrderEquipView(BaseView):
     def index(self,id):
         # user_object = User.query.get(current_user.get_id())
         lendingorder=lending_order_detail(id)
-
         return self.render(
             'order_equip.html', 
             oId = id,
@@ -115,13 +115,37 @@ class OrderEquipView(BaseView):
 
 class NewLendingOrderView(BaseView):
     def is_visible(self):
-        # This view won't appear in the menu structure
         return False
  
-    @expose('/')
+    @expose('/', methods=['GET', 'POST'])
     def index(self):
-        print(id)
-        return self.render('new_lending_order.html', lendingorder={})
+        print(request.method)
+        if request.method == 'GET':
+            allow_jobs = Job.query.all()
+            job_list = []
+            for row in allow_jobs:
+                job_list.append({"id":row.JID, "name":row.NAME})
+
+            allow_equip = Equip.query.filter_by(STATUS=0)
+            equip_list = []
+            for row in allow_equip:
+                equip_list.append({"id":row.EID, "name":row.PNAME})
+
+            user_object = User.query.get(current_user.get_id())
+            form_data = {
+                "P_NAME":user_object.NAME,
+                "RECIEVE_DATE":datetime.today().strftime('%Y-%m-%d')
+            }
+            return self.render('new_lending_order.html', data=form_data, job_list=job_list, equip_list=equip_list)
+        else:
+
+            form_dict = request.values.to_dict(flat=False)
+            recieve_date = request.values.get('recieve_date')
+            job = request.values.get('job')
+            reason = request.values.get('reason')
+            equips = form_dict["equips"] if equips not in form_dict else []
+
+            return redirect('/')
 
 class LogoutView(BaseView):
     @expose('/')

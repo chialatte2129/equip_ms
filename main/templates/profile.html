@@ -2,22 +2,24 @@
 {% block body %}
 <div>
     <div class="card">
-        <div class="card__image">
-            <img src={{image_file}} alt="">
-        </div>
         <div class="card__contacts">
-            <h1>員工資訊</h1>
-            <div class="card__info">
-                <table>
-                    <tr>
-                        <td class="l-grey">姓名</td>
-                        <td class="pl-md">{{name}}</td>
-                    </tr>
-                    <tr>
-                        <td class="l-grey">職位</td>
-                        <td class="pl-md">{{position}}</td>
-                    </tr>
-                </table>
+            <div class="card__image">
+                <img src={{image_file}} alt="">
+            </div>
+            <div >
+                <h1>員工資訊</h1>
+                <div class="card__info">
+                    <table>
+                        <tr>
+                            <td class="l-grey">姓名</td>
+                            <td class="pl-md">{{name}}</td>
+                        </tr>
+                        <tr>
+                            <td class="l-grey">職位</td>
+                            <td class="pl-md">{{position}}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -34,7 +36,7 @@
                     <table  align="center"
                     cellpadding="10" border='3' style="width:100%;">
                         <tr>
-                            <th style="width:100px;text-align:center;">領用單編號</th>
+                            <th style="width:40px;text-align:center;">編號</th>
                             <th style="width:120px;text-align:left;">工作</th>
                             <th style="width:auto;text-align:left;">領用事由</th>
                             <th style="width:100px;text-align:center;">領用日期</th>
@@ -61,15 +63,15 @@
             </div>
         </div>
     </div>
+    <div style="width:100%;height:100px;"></div>
 </div>
-<style>
 
+<style>
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
 
 body {
     display: flex;
@@ -81,28 +83,34 @@ body {
 
 .card {
     float:left;
+    min-height:400px;
     width: 30%;
-    border: 1px solid #333;
-    border-radius: 10px;
+    padding:5px;
+    /* border: 1px solid #333;
+    border-radius: 10px; */
     overflow: hidden;
 }
 
 .card-right {
-    min-height:536px;
+    min-height:500px;
     float:left;
     width: 70%;
-    border: 1px solid #333;
-    border-radius: 10px;
+    padding:5px;
     overflow: hidden;
 }
 
 .card__image img {
     width: 100%;
+    padding:10px;
     display: block;
+    border: 1px solid #333;
 }
 
 .card__contacts {
-    padding: 20px
+    min-height:490px;
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 10px;
 }
 
 .card__contacts h1 {
