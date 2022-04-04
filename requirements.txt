@@ -1,8 +1,8 @@
-Flask==1.1.4
-Flask-Admin==1.6.0
-Flask-SQLAlchemy==2.5.1
-Flask-User==1.0.2.2
-Flask-Login==0.4.1
-cx-Oracle==8.3.0
-python-dotenv==0.19.2
-MarkupSafe==2.0.1
+Flask
+Flask-Admin
+Flask-SQLAlchemy
+Flask-User
+Flask-Login
+cx-Oracle
+python-dotenv
+MarkupSafe
