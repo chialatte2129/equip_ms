@@ -2,7 +2,7 @@ from flask_admin.form.upload import ImageUploadField
 from flask_admin.form import thumbgen_filename
 from flask_admin.form.fields import Select2Field
 from flask_admin.contrib.sqla import ModelView
-from flask_login import login_required
+from flask_login import current_user
 from flask import url_for
 from main.models import User
 from uuid import uuid4
@@ -31,6 +31,14 @@ class UserView(ModelView):
             ]
         )
     )
+
+    def is_accessible(self):#登錄了才能顯示，沒有登錄就不顯示
+        user_object = User.query.get(current_user.get_id())
+        return user_object.AUTH=="system"
+    
+    def is_visible(self):
+        user_object = User.query.get(current_user.get_id())
+        return user_object.AUTH=="system"
 
     def getinfo(self):
         return "this is another model"

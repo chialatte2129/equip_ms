@@ -23,11 +23,11 @@
                 <table cellpadding="10" border='3' align="center">
                     <tr height="30">
                         <th width="120">領用人員</th>
-                        <td width="200"><span>{{ data.P_NAME }}</span></tr>
+                        <td width="400"><span>{{ data.P_NAME }}</span></tr>
                     </tr>
-                    <tr height="30">
+                    <tr height="30" >
                         <th>領用日期</th>
-                        <td><input style="width:100%;height:30px;" type="date" value="{{ data.RECIEVE_DATE }}" name="recieve_date"></td>
+                        <td width="400"><input style="width:100%;height:30px;" type="date" value="{{ data.RECIEVE_DATE }}" name="recieve_date"></td>
                     </tr>
                     <tr height="30">
                         <th >領用工作</th>
@@ -57,9 +57,9 @@
                     </tr>
                     
                 </table>
-                <div class="btn_div">
-                    <a href="/admin"><button type="button">回上一頁</button></a>
-                    <button type="submit">確認</button>
+                <div class="btn-div">
+                    <a href="/admin"><button class="btn-item" type="button">回上一頁</button></a>
+                    <button class="btn-item" type="submit">確認</button>
                 </div>
             </form>
         </div>
@@ -69,34 +69,24 @@
 
             $(document).ready(function(){
                 $('.selectpicker').selectpicker();
-                // $('#skills').change(function(){
-                //     $('#hidden_skills').val($('#skills').val());
-                // });
-             
-                // $('#multiple_select_form').on('submit', function(event){
-                //     event.preventDefault();
-                //     if($('#equips').val() != ''){
-                //         console.log("gogogogo");
-                //         var form_data = $(this).serialize();
-                //         // $.ajax({
-                //         //     url:"/ajax_add",
-                //         //     method:"POST",
-                //         //     data:form_data,
-                //         //     success:function(data)
-                //         //     {
-                //         //         //console.log(data);
-                //         //         $('#hidden_skills').val('');
-                //         //         $('.selectpicker').selectpicker('val', '');
-                //         //         alert(data);
-                //         //     }
-                //         // })
-                //     } else {
-                //         alert("Please select framework");
-                //         return false;
-                //     }
-                // });
             });
             </script>
     </body>
+    <style>
+        .btn-div{
+            margin-top:20px;
+        }
+        .btn-item{
+            width: 100px;
+            height: 30px;
+            line-height:10px;
+            font-size: 14px;
+            background-color: #97A38D;
+            color:white;
+            border-radius: 5px;
+            border: 0px;
+            cursor: pointer;
+        }
+    </style>
 </html>
 {% endblock %}
