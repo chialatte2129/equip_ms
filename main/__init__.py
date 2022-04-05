@@ -1,3 +1,4 @@
+#coding=utf-8  
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -7,9 +8,15 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+#### LINUX env use 
+#### export LD_LIBRARY_PATH=/home/ubuntu/docker_lab/equip_ms/instantclient_ubuntu:$LD_LIBRARY_PATH
+#### source ~/.bashrc 
 try:
-    lib_dir=r"C:\oracle\instantclient_21_3"
-    cx_Oracle.init_oracle_client(lib_dir=lib_dir)
+    if sys.platform.startswith("linux"):
+        cx_Oracle.init_oracle_client()
+    elif sys.platform.startswith("win32"):
+        lib_dir=r"C:\oracle\instantclient_21_3"
+        cx_Oracle.init_oracle_client(lib_dir=lib_dir)
 except Exception as err:
     print("Whoops!")
     print(err)

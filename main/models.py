@@ -1,8 +1,6 @@
 from main import db
 from datetime import datetime as dt
 
-
-
 class User(db.Model):
     __tablename__ = 'USERS'
     __table_args__ = {'extend_existing': True}
@@ -33,7 +31,7 @@ class User(db.Model):
         return False
 
     def __repr__(self):
-        return f'{self.NAME} <{self.ACCOUNT}>'
+        return f'{self.NAME}'
 
 def query_user(user_id):
     for user in User.query.all():
@@ -93,7 +91,7 @@ lending_equip = db.Table('ORDEREQUIP',
 class LendingOrder(db.Model):
     __tablename__ = 'LENDINGORDER'
     __table_args__ = {'extend_existing': True}
-    # can_create = True
+    can_create = False
     OID = db.Column(db.Integer(), primary_key=True , autoincrement=True)
     RECEIVE_DATE = db.Column(db.Date, nullable=True)
     RETURN_DATE = db.Column(db.Date, nullable=True)

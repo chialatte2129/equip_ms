@@ -8,15 +8,15 @@
     <div class="login-page">
         <div class="form">
             <div>
-                <span>EQMS器材借還管理</span>
+                <h2>EQMS器材領用管理</h2>
             </div>
             <form class="login-form"  action="{{ url_for('login') }}" method="POST">
-                <input type="text" name="userid" id="userid" placeholder="username"/>
-                <input type="password" name="password" id="password" placeholder="password"/>
+                <input type="text" name="userid" id="userid" placeholder="帳號"/>
+                <input type="password" name="password" id="password" placeholder="密碼"/>
                 {% with messages = get_flashed_messages() %}
                     <div style="color:red">{{ messages[0] }}</div>
                 {% endwith %} 
-                <button type="submit" name="submit">login</button>
+                <button type="submit" name="submit" style="font-size:20px;font-weight:bolder;">登入</button>
             </form>
         </div>
     </div>
@@ -36,7 +36,7 @@
   background: #FFFFFF;
   max-width: 360px;
   margin: 0 auto 100px;
-  padding: 45px;
+  padding: 10px 45px 45px 45px;
   text-align: center;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
 }
@@ -55,7 +55,7 @@
   font-family: "Roboto", sans-serif;
   text-transform: uppercase;
   outline: 0;
-  background: #4CAF50;
+  background: #ffb546;
   width: 100%;
   border: 0;
   padding: 15px;
@@ -66,7 +66,7 @@
   cursor: pointer;
 }
 .form button:hover,.form button:active,.form button:focus {
-  background: #43A047;
+  background: #fc9700;
 }
 .form .message {
   margin: 15px 0 0;
@@ -74,7 +74,7 @@
   font-size: 12px;
 }
 .form .message a {
-  color: #4CAF50;
+  color: #636363;
   text-decoration: none;
 }
 .form .register-form {
@@ -114,9 +114,9 @@
   color: #EF3B3A;
 }
 body {
-  background: #76b852; /* fallback for old browsers */
-  background: rgb(141,194,111);
-  background: linear-gradient(90deg, rgba(141,194,111,1) 0%, rgba(118,184,82,1) 50%);
+  background: #1e1e1e; /* fallback for old browsers */
+  background: rgb(24, 24, 24);
+  background: linear-gradient(90deg, rgb(65, 65, 65) 0%, rgb(17, 17, 17) 70%);
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;      
