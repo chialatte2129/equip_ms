@@ -105,13 +105,40 @@ class OrderEquipView(BaseView):
     @expose('/')
     @login_required
     def index(self,id):
-        # user_object = User.query.get(current_user.get_id())
+        user_object = User.query.get(current_user.get_id())
         lendingorder=lending_order_detail(id)
+        orders=my_lending_order(user_object.ACCOUNT)
+
         return self.render(
             'order_equip.html', 
             oId = id,
-            lendingorder = lendingorder
+            orders = orders,                 #領用單
+            lendingorder = lendingorder      #領用單明細
+
         )
+
+class UpdateLendingOrderView(BaseView):
+    def is_visible(self):
+        return False
+ 
+    @expose('/', methods=['GET', 'POST'])
+    @login_required
+    def index(self,id):
+        
+
+         if request.method == 'GET':
+             return self.render('return_equip.html', return_oid = id)
+            
+         else:
+            oid = request.values['return_btn']
+            cursor.prepare(f"UPDATE LENDINGORDER SET RETURN_DATE = SYSDATE WHERE OID = {int(oid)}")
+            cursor.execute(None,{})
+            connection.commit()
+            cursor.prepare(f"UPDATE EQUIP SET STATUS = 0 WHERE EID IN(SELECT EID FROM ORDEREQUIP WHERE ORDEREQUIP.OID = {int(oid)})")
+            cursor.execute(None,{})
+            connection.commit()
+            return redirect('/')
+            
 
 class NewLendingOrderView(BaseView):
     def is_visible(self):
@@ -251,6 +278,7 @@ babel = Babel()
 app.config['BABEL_DEFAULT_LOCALE'] = 'zh_TW'
 babel.init_app(app)
 admin.add_view(OrderEquipView(url="order/<id>"))
+admin.add_view(UpdateLendingOrderView(url="return/<id>"))
 admin.add_view(NewLendingOrderView(url="new_order"))
 admin.add_view(UserAdmin(db.session, url="user", name = u'使用者管理'))
 admin.add_view(JobView(db.session, url="job", name=u"工作管理"))

@@ -1,0 +1,58 @@
+{% extends 'admin/index.html' %}
+{% block body %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--網頁的編碼-->
+        <meta charset="UTF-8"></meta>
+        <title>歸還</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <!-- <script src="http://maxcdn.bootstrapcdn.com/bootstrap/5.0.2/js/bootstrap.min.js"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" ></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+    </head>
+
+    <body>
+        <div  style="text-align:center;">
+            <br><br>
+            <h3>確認歸還?</h3>
+           
+        </div>
+        <div style="text-align:center;">
+            <form method="post" >  
+                <div class="btn-div">
+                    <br>
+                    <a href="/admin"><button class="btn-item" type="button">回上一頁</button></a>
+                    <button class="btn-item" type="submit" name = "return_btn" value="{{ return_oid }}">確認</button>
+                </div>
+            </form>
+        </div>
+        <div style="width:100%;height:100px;"></div>
+
+        <script type="text/javascript">
+
+            $(document).ready(function(){
+                $('.selectpicker').selectpicker();
+            });
+            </script>
+    </body>
+    <style>
+        .btn-div{
+            margin-top:20px;
+        }
+        .btn-item{
+            width: 100px;
+            height: 30px;
+            line-height:10px;
+            font-size: 14px;
+            background-color: #97A38D;
+            color:white;
+            border-radius: 5px;
+            border: 0px;
+            cursor: pointer;
+        }
+    </style>
+</html>
+{% endblock %}
