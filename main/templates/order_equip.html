@@ -9,87 +9,72 @@
     </head>
 
     <body>
-    <div  style="text-align:center" >
-      {{ return_oid }}
-      {% for row in orders %}
-      
-      <div  style=float:right;>
-        <a style="float:right;" href="../../return/{{ row.領用單編號 }}">
-          <button type="button" class="btn" name = "return_btn" ">歸還</button>
-      </a>
-      </div>
-    
-
-      
-      
-    </div>
-    <div style="text-align:left; ">
-    <form method="post" action = '/'>
-
-      <table  align="center" cellpadding="10" border='3'>
-     
-          領用單編號： {{ row.領用單編號 }}<br>
-          工作事項： {{ row.所屬工作 }}<br>
-          領用事由： {{ row.領用事由 }}<br>
-          領用日期： {{ row.領用日期 }}<br>
-          歸還日期： {{ row.歸還日期 }}<br>
-          器材數量： {{ row.領用數量 }}<br>
-        {% endfor %}
-      </table>
-
-      <br>
-    </div>
-
-
-
-      <div  style="text-align:center;">
-        <h1>領用單明細</h1>
-      </div>
-      <div style="text-align:center;">
-
-
-    <table  align="center"
-    cellpadding="10" border='3'>
-      <tr>
-        <th>物品編號</th>
-        <th>物品名稱</th>
-        <th>物品類別</th>
-        <th>採購日期</th>
-        <th>領用狀態</th>
-        <th>圖片檔</th>
-      </tr>
-      {% for row in lendingorder %}
-     
-        <td> {{ row.物品編號 }}</td>
-        <td> {{ row.物品名稱 }}</td>
-        <td> {{ row.物品類別 }}</td>
-        <td> {{ row.採購日期 }}</td>
-        <td> {{ row.領用狀態 }}</td>
-        <td><img src="{{ url_for('static',filename = row.圖片檔) }}" alt="" width="100" height="100"></td>
-       
-      </tr>
-     
-      {% endfor %}
-    </table>
-    <br><br><br>  
-  </form>
-</div>
-
-
-<style>
-.btn{
-    width: 70px;
-    height: 30px;
-    font-size: 14px;
-    background-color: #97A38D;
-    color:white;
-    border-radius: 5px;
-    border: 0px;
-    cursor: pointer;
-}
-
-
-
-</style>
-
+        <div  style="text-align:center;width:100%;height:30px;" >
+            <div  style=float:right;>
+                <a href="/admin"><button class="btn-item" type="button">我的領用單</button></a>
+                <a style="float:right;" href="/admin/return/{{ order.領用單編號 }}">
+                    <button type="button" class="btn" name="return_btn" >歸還</button>
+                </a>
+            </div>
+        </div>
+        <div style="text-align:left; width:100%;">
+            <div  style="text-align:center;width:100%;">
+                <h1>領用單明細</h1>
+            </div>
+            <form method="post" action = '/'>
+                <div style="width:100%;">
+                    <div style="margin:auto;width:250px;text-align: left;">
+                        領用單號： {{ order.領用單編號 }}<br>
+                        工作事項： {{ order.所屬工作 }}<br>
+                        領用事由： {{ order.領用事由 }}<br>
+                        領用日期： {{ order.領用日期 }}<br>
+                        歸還日期： {{ order.歸還日期 }}<br>
+                    </div>
+                </div>             
+                <div style="text-align:center;">
+                    <table  align="center" cellpadding="10" border='3'>
+                        <tr>
+                            <th style="width:auto;min-width:200px;">物品名稱</th>
+                            <th style="width:200px;">物品類別</th>
+                            <th style="width:200px;">圖片檔</th>
+                        </tr>
+                        {% for row in lendingorder %}
+                        <tr>
+                            <td> {{ row.物品類別 }}</td>
+                            <td> {{ row.物品名稱 }}</td>
+                            <td><img src="{{ url_for('static',filename = row.圖片檔) }}" alt="" width="100" height="100"></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            
+            </form>
+        </div>
+    </body>
+    <style>
+        .btn-item{
+            width: 100px;
+            height: 30px;
+            line-height:10px;
+            font-size: 14px;
+            background-color: #97A38D;
+            color:white;
+            border-radius: 5px;
+            border: 0px;
+            cursor: pointer;
+            margin-right:10px;
+        }
+        .btn{
+            width: 70px;
+            height: 30px;
+            line-height:10px;
+            font-size: 14px;
+            background-color: #97A38D;
+            color:white;
+            border-radius: 5px;
+            border: 0px;
+            cursor: pointer;
+        }
+    </style>
+</html>
 {% endblock %}

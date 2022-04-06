@@ -1,4 +1,3 @@
-from typing import List
 from main import app
 from main import db, cursor, connection
 from main import login_manager
@@ -11,7 +10,6 @@ from main.models import User, query_user, Job, Category, Equip, LendingOrder
 from main.user import UserAdmin
 from main.equip import EquipAdmin
 from datetime import datetime
-from sqlalchemy import func
 from flask_babelex import Babel
 
 def my_lending_order(account)->list:
@@ -34,9 +32,7 @@ def my_lending_order(account)->list:
     cursor.execute(None, {'account':account})
     data = cursor.fetchall()
     res_data = []
-    print(data)
     for i in data:
-        print(i)
         item = {
             '領用單編號': i[0],
             '領用日期': i[1],
@@ -47,6 +43,36 @@ def my_lending_order(account)->list:
         }
         res_data.append(item)
     return res_data
+
+def get_order(order_id)->list:
+    sql="""
+        SELECT 
+            LO.OID, 
+            TO_CHAR(RECEIVE_DATE, 'YYYY-MM-DD'), 
+            COALESCE(TO_CHAR(RETURN_DATE, 'YYYY-MM-DD'),'--'),
+            REASON, 
+            JB.NAME, 
+            COUNT(OE.EID)
+        FROM LENDINGORDER LO
+        LEFT OUTER JOIN JOB JB ON LO.JID = JB.JID
+        LEFT OUTER JOIN ORDEREQUIP OE ON LO.OID = OE.OID
+        WHERE LO.JID = JB.JID AND LO.OID=:oid
+        GROUP BY LO.OID, RECEIVE_DATE, RETURN_DATE, REASON, JB.NAME
+        ORDER BY RECEIVE_DATE desc
+    """
+    cursor.prepare(sql)
+    cursor.execute(None, {'oid':order_id})
+    data = cursor.fetchall()  
+    result = {
+        '領用單編號': data[0][0],
+        '領用日期': data[0][1],
+        '歸還日期': data[0][2],
+        '領用原因': data[0][3],
+        '所屬工作': data[0][4],
+        '領用數量':data[0][5]
+    }
+    return result
+
 
 def lending_order_detail(lending_id)->list:
     sql=f"""
@@ -101,20 +127,18 @@ class OrderEquipView(BaseView):
     def is_visible(self):
         # This view won't appear in the menu structure
         return False
- 
     @expose('/')
     @login_required
     def index(self,id):
-        user_object = User.query.get(current_user.get_id())
         lendingorder=lending_order_detail(id)
-        orders=my_lending_order(user_object.ACCOUNT)
-
+        order=get_order(id)
+        print(order["歸還日期"]=="--")
         return self.render(
             'order_equip.html', 
             oId = id,
-            orders = orders,                 #領用單
-            lendingorder = lendingorder      #領用單明細
-
+            order = order,                 #領用單
+            lendingorder = lendingorder,    #領用單明細
+            show_return=order["歸還日期"]=="--"
         )
 
 class UpdateLendingOrderView(BaseView):
@@ -124,12 +148,9 @@ class UpdateLendingOrderView(BaseView):
     @expose('/', methods=['GET', 'POST'])
     @login_required
     def index(self,id):
-        
-
-         if request.method == 'GET':
-             return self.render('return_equip.html', return_oid = id)
-            
-         else:
+        if request.method == 'GET':
+            return self.render('return_equip.html', return_oid = id)
+        else:
             oid = request.values['return_btn']
             cursor.prepare(f"UPDATE LENDINGORDER SET RETURN_DATE = SYSDATE WHERE OID = {int(oid)}")
             cursor.execute(None,{})
