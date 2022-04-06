@@ -252,6 +252,7 @@ class CateView(ModelView):
     can_create = True
     column_display_pk = False
     form_display_pk = False
+    form_columns = ('CNAME',)
     column_labels = dict(
         CID="類別編號",
         CNAME="類別名稱"
