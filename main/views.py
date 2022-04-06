@@ -85,7 +85,7 @@ def lending_order_detail(lending_id)->list:
             E.PICTURE PICTURE
 
         FROM EQUIP E, EQUIPCATE EC, CATEGORY C, LENDINGORDER LO
-        WHERE E.EID=EC.EID AND EC.CID=C.CID AND E.EID in (
+        WHERE E.EID=EC.EID AND EC.CID=C.CID AND LO.OID = :id AND E.EID in (
             SELECT EID FROM ORDEREQUIP WHERE OID = :id
         )
         GROUP BY E.EID, E.PNAME, E.BUY_DATE, E.PICTURE, E.STATUS
