@@ -1,0 +1,8 @@
+Flask
+Flask-Admin
+Flask-SQLAlchemy
+Flask-User
+Flask-Login
+cx-Oracle
+python-dotenv
+MarkupSafe
